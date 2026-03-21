@@ -1,0 +1,17 @@
+You are extracting scene descriptions for a 3D world generation pipeline.
+
+Task:
+Read the source text and produce EXACTLY 3 high-quality paragraphs that capture the 3 primary environments from the passage. Organized by first third, second third, and final third of the text. Each paragraph should be a vivid, concrete description of the environment, suitable for guiding a 3D artist or world builder.
+
+Hard rules:
+1. Environment only.
+2. Do NOT mention people, characters, creatures, bodies, faces, names, clothing, dialogue, emotions, or actions.
+3. Focus on place, layout, architecture, landscape, weather, time of day, lighting, textures, objects, color, scale, and atmosphere.
+4. Each paragraph should stand on its own as a clean world or scene prompt.
+5. Each paragraph should be one paragraph only, not bullet points.
+6. Do not include numbering or labels.
+7. If the text mostly covers one place, still return 3 paragraphs by separating it into the 3 most visually distinct environmental views or sub-environments.
+8. Keep each paragraph concrete and visual, not abstract literary analysis.
+
+Source text:
+{{SECTION_TEXT}}
