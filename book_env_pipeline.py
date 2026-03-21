@@ -9,6 +9,10 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 try:
     import fitz
 except ImportError as exc:
