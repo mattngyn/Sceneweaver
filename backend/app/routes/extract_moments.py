@@ -9,9 +9,11 @@ router = APIRouter()
 async def extract_moments(request: ExtractMomentsRequest):
     if not request.text.strip():
         raise HTTPException(status_code=400, detail="Text cannot be empty")
+    if not 1 <= request.num_scenes <= 20:
+        raise HTTPException(status_code=400, detail="num_scenes must be between 1 and 20")
 
     try:
-        moments = await extract_key_moments(request.text)
+        moments = await extract_key_moments(request.text, request.num_scenes)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to extract moments: {e}")
 

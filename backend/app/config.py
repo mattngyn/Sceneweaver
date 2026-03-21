@@ -4,7 +4,7 @@ from functools import lru_cache
 
 class Settings(BaseSettings):
     openai_api_key: str = ""
-    elevenlabs_api_key: str = ""
+    cartesia_api_key: str = ""
     world_model_backend: str = "worldgen"
 
     # Book scene LoRA (set to path of trained safetensors to enable)

@@ -1,37 +1,36 @@
-from elevenlabs import AsyncElevenLabs
+import httpx
 from app.config import get_settings
 
-VOICE_ID = "JBFqnCBsd6RMkjVDRZzb"  # "George" -- a clear, warm narrator voice
-
-TONE_TO_STYLE: dict[str, dict] = {
-    "tense": {"stability": 0.3, "similarity_boost": 0.8},
-    "serene": {"stability": 0.7, "similarity_boost": 0.6},
-    "ominous": {"stability": 0.4, "similarity_boost": 0.7},
-    "joyful": {"stability": 0.5, "similarity_boost": 0.7},
-    "melancholic": {"stability": 0.6, "similarity_boost": 0.8},
-    "neutral": {"stability": 0.5, "similarity_boost": 0.75},
-}
+CARTESIA_URL = "https://api.cartesia.ai/tts/bytes"
+VOICE_ID = "6ccbfb76-1fc6-48f7-b71d-91ac6298247b"
 
 
 async def generate_narration(text: str, emotional_tone: str = "neutral") -> bytes:
-    """Generate TTS audio bytes (mp3) for the given narration text."""
+    """Generate TTS audio bytes (wav) via Cartesia sonic-3."""
     settings = get_settings()
-    client = AsyncElevenLabs(api_key=settings.elevenlabs_api_key)
 
-    style = TONE_TO_STYLE.get(emotional_tone, TONE_TO_STYLE["neutral"])
-
-    audio_iterator = await client.text_to_speech.convert(
-        voice_id=VOICE_ID,
-        text=text,
-        model_id="eleven_flash_v2_5",
-        voice_settings={
-            "stability": style["stability"],
-            "similarity_boost": style["similarity_boost"],
+    payload = {
+        "model_id": "sonic-3",
+        "transcript": text,
+        "voice": {"mode": "id", "id": VOICE_ID},
+        "output_format": {
+            "container": "wav",
+            "encoding": "pcm_f32le",
+            "sample_rate": 44100,
         },
-    )
+        "speed": "normal",
+        "generation_config": {"speed": 0.8, "volume": 1},
+    }
 
-    chunks: list[bytes] = []
-    async for chunk in audio_iterator:
-        chunks.append(chunk)
-
-    return b"".join(chunks)
+    async with httpx.AsyncClient(timeout=60) as client:
+        resp = await client.post(
+            CARTESIA_URL,
+            headers={
+                "Cartesia-Version": "2025-04-16",
+                "X-API-Key": settings.cartesia_api_key,
+                "Content-Type": "application/json",
+            },
+            json=payload,
+        )
+        resp.raise_for_status()
+        return resp.content

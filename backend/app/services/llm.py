@@ -3,10 +3,10 @@ from openai import AsyncOpenAI
 from app.config import get_settings
 from app.models.schemas import KeyMoment
 
-SYSTEM_PROMPT = """\
+SYSTEM_PROMPT_TEMPLATE = """\
 You are a literary scene analyst. Given a chapter or passage of text from a book, \
-identify the 3-7 most visually significant key moments -- scenes that would make \
-compelling 3D environments to explore.
+identify exactly {num_scenes} of the most visually significant key moments -- scenes \
+that would make compelling 3D environments to explore.
 
 For each moment, provide:
 - title: A short evocative label (e.g., "The Forest Clearing")
@@ -19,23 +19,25 @@ For each moment, provide:
   "joyful", "melancholic").
 - page_reference: If identifiable, a brief note about where this occurs in the text.
 
-Return a JSON array of objects with these fields. Order them chronologically as they \
-appear in the text.\
+Return a JSON object with a "moments" key containing an array of exactly {num_scenes} \
+objects with these fields. Order them chronologically as they appear in the text.\
 """
 
 
-async def extract_key_moments(text: str) -> list[KeyMoment]:
+async def extract_key_moments(text: str, num_scenes: int = 5) -> list[KeyMoment]:
     settings = get_settings()
     client = AsyncOpenAI(api_key=settings.openai_api_key)
+
+    system_prompt = SYSTEM_PROMPT_TEMPLATE.format(num_scenes=num_scenes)
 
     response = await client.chat.completions.create(
         model="gpt-4o",
         response_format={"type": "json_object"},
         messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": system_prompt},
             {
                 "role": "user",
-                "content": f"Analyze this text and extract the key visual moments:\n\n{text}",
+                "content": f"Analyze this text and extract exactly {num_scenes} key visual moments:\n\n{text}",
             },
         ],
     )

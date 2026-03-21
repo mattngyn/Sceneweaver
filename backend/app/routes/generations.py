@@ -22,6 +22,7 @@ router = APIRouter()
 async def create_new_generation(
     file: UploadFile | None = File(None),
     text: str | None = Form(None),
+    num_scenes: int = Form(5),
 ):
     """Start a new generation from a PDF upload or raw text.
 
@@ -54,8 +55,11 @@ async def create_new_generation(
     else:
         raise HTTPException(status_code=400, detail="Provide either a PDF file or text")
 
+    if not 1 <= num_scenes <= 20:
+        raise HTTPException(status_code=400, detail="num_scenes must be between 1 and 20")
+
     gen_id = await create_generation(source_text, source_filename)
-    asyncio.create_task(run_pipeline(gen_id, source_text))
+    asyncio.create_task(run_pipeline(gen_id, source_text, num_scenes))
 
     return GenerationCreateResponse(id=gen_id, status="pending")
 

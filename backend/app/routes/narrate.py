@@ -16,4 +16,4 @@ async def narrate(request: NarrateRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to generate narration: {e}")
 
-    return Response(content=audio_bytes, media_type="audio/mpeg")
+    return Response(content=audio_bytes, media_type="audio/wav")

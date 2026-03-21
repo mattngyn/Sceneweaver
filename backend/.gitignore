@@ -28,9 +28,14 @@ finetune/train/logs/
 finetune/weights/
 finetune/eval/generated_images/
 finetune/eval/results/
+finetune/
+README.md
 
 # WorldGen (cloned dependency -- clone fresh on setup, don't commit)
 WorldGen/
+
+# WorldGen2 adapter (not for public commits)
+app/world_model/worldgen2_adapter.py
 
 # OS/editor
 .DS_Store

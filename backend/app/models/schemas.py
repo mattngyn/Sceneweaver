@@ -16,6 +16,7 @@ class KeyMoment(BaseModel):
 
 class ExtractMomentsRequest(BaseModel):
     text: str
+    num_scenes: int = 5
 
 
 class ExtractMomentsResponse(BaseModel):

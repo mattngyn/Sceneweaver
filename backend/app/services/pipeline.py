@@ -55,7 +55,7 @@ async def _generate_audio_for_moment(gen_id: str, moment_index: int, narration_t
         settings = get_settings()
         audio_dir = Path(settings.static_dir) / "audio"
         audio_dir.mkdir(parents=True, exist_ok=True)
-        filename = f"{gen_id}_{moment_index}.mp3"
+        filename = f"{gen_id}_{moment_index}.wav"
         audio_path = audio_dir / filename
         audio_path.write_bytes(audio_bytes)
 
@@ -64,12 +64,12 @@ async def _generate_audio_for_moment(gen_id: str, moment_index: int, narration_t
         await update_moment_audio(gen_id, moment_index, "failed")
 
 
-async def run_pipeline(gen_id: str, source_text: str) -> None:
+async def run_pipeline(gen_id: str, source_text: str, num_scenes: int = 5) -> None:
     """Full pipeline: extract moments, then generate scenes + audio in parallel per moment."""
     try:
         await update_generation_status(gen_id, "extracting")
 
-        moments = await extract_key_moments(source_text)
+        moments = await extract_key_moments(source_text, num_scenes)
         if not moments:
             await update_generation_status(gen_id, "failed")
             return
