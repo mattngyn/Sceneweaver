@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { ChevronDown, Clock3, FileText, Volume2, WandSparkles } from "lucide-react"
 
 import type {
@@ -55,7 +56,13 @@ function formatTimestamp(value: string) {
   }).format(date)
 }
 
-function MomentRow({ moment }: { moment: MomentDetail }) {
+function MomentRow({
+  generationId,
+  moment,
+}: {
+  generationId: string
+  moment: MomentDetail
+}) {
   const sceneStatus = momentStatusStyles[moment.scene_status]
   const audioStatus = momentStatusStyles[moment.audio_status]
 
@@ -95,7 +102,8 @@ function MomentRow({ moment }: { moment: MomentDetail }) {
           {moment.narration_text}
         </p>
 
-        <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
           <div className="inline-flex items-center gap-1.5">
             <WandSparkles className="size-3.5" />
             {moment.scene_asset_format ? moment.scene_asset_format.toUpperCase() : "No scene asset yet"}
@@ -104,6 +112,13 @@ function MomentRow({ moment }: { moment: MomentDetail }) {
             <Volume2 className="size-3.5" />
             {moment.audio_url ? "Audio ready" : "Audio unavailable"}
           </div>
+        </div>
+          <Link
+            href={`/scenes/${generationId}/${moment.moment_index}`}
+            className="inline-flex items-center rounded-full border border-black/10 bg-white px-3 py-2 text-xs font-semibold tracking-[0.18em] uppercase text-slate-700 transition-colors hover:bg-slate-50 dark:border-white/10 dark:bg-slate-950/70 dark:text-slate-200 dark:hover:bg-slate-950"
+          >
+            Open scene
+          </Link>
         </div>
       </div>
     </li>
@@ -166,7 +181,11 @@ export function GenerationCard({ generation }: GenerationCardProps) {
         {generation.moments.length > 0 ? (
           <ul className="space-y-3">
             {generation.moments.map((moment) => (
-              <MomentRow key={moment.moment_index} moment={moment} />
+              <MomentRow
+                key={moment.moment_index}
+                generationId={generation.id}
+                moment={moment}
+              />
             ))}
           </ul>
         ) : (
