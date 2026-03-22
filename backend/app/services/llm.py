@@ -24,21 +24,21 @@ objects with these fields. Order them chronologically as they appear in the text
 """
 
 
-async def extract_key_moments(text: str, num_scenes: int = 5) -> list[KeyMoment]:
+async def extract_key_moments(text: str, num_scenes: int = 5, book_title: str | None = None) -> list[KeyMoment]:
     settings = get_settings()
     client = AsyncOpenAI(api_key=settings.openai_api_key)
 
     system_prompt = SYSTEM_PROMPT_TEMPLATE.format(num_scenes=num_scenes)
+
+    book_context = f" from the book \"{book_title}\"" if book_title else ""
+    user_message = f"Analyze this text{book_context} and extract exactly {num_scenes} key visual moments:\n\n{text}"
 
     response = await client.chat.completions.create(
         model="gpt-5-nano",
         response_format={"type": "json_object"},
         messages=[
             {"role": "system", "content": system_prompt},
-            {
-                "role": "user",
-                "content": f"Analyze this text and extract exactly {num_scenes} key visual moments:\n\n{text}",
-            },
+            {"role": "user", "content": user_message},
         ],
     )
 

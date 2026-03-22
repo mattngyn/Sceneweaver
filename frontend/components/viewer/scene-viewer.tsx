@@ -115,16 +115,16 @@ export function SceneViewer({
       const perspectiveCamera = new THREE.PerspectiveCamera(
         65,
         Math.max(container.clientWidth, 1) /
-          Math.max(container.clientHeight, 1),
+        Math.max(container.clientHeight, 1),
         0.1,
         1000
       )
-      perspectiveCamera.position.set(0, noFlip ? 2 : 0, 0)
+      perspectiveCamera.position.set(0, noFlip ? 1.2 : 0, noFlip ? 1.0 : 0)
       perspectiveCamera.rotation.order = "YXZ"
       perspectiveCamera.up.set(0, 1, 0)
       perspectiveCamera.lookAt(0, 0, 0)
       if (noFlip) {
-        perspectiveCamera.rotation.x = -Math.PI / 2
+        perspectiveCamera.rotation.x = 0
       }
       camera = perspectiveCamera
 

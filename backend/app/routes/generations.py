@@ -30,6 +30,7 @@ async def create_new_generation(
     file: UploadFile | None = File(None),
     text: str | None = Form(None),
     num_scenes: int = Form(5),
+    book_title: str | None = Form(None),
 ):
     """Start a new generation from a PDF upload or raw text.
 
@@ -70,7 +71,7 @@ async def create_new_generation(
         raise HTTPException(status_code=400, detail="num_scenes must be between 1 and 20")
 
     gen_id = await create_generation(source_text, source_filename)
-    asyncio.create_task(run_pipeline(gen_id, source_text, num_scenes))
+    asyncio.create_task(run_pipeline(gen_id, source_text, num_scenes, book_title=book_title))
 
     return GenerationCreateResponse(id=gen_id, status="pending")
 

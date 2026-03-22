@@ -79,26 +79,29 @@ async def _generate_audio_for_moment(gen_id: str, moment_index: int, narration_t
         await update_moment_audio(gen_id, moment_index, "failed")
 
 
-async def run_pipeline(gen_id: str, source_text: str, num_scenes: int = 5) -> None:
+async def run_pipeline(gen_id: str, source_text: str, num_scenes: int = 5, book_title: str | None = None) -> None:
     """Full pipeline: extract moments, then generate scenes + audio in parallel per moment."""
     try:
-        logger.info(f"[{gen_id}] Pipeline started (num_scenes={num_scenes})")
+        logger.info(f"[{gen_id}] Pipeline started (num_scenes={num_scenes}, book_title={book_title})")
         await update_generation_status(gen_id, "extracting")
 
-        moments = await extract_key_moments(source_text, num_scenes)
+        moments = await extract_key_moments(source_text, num_scenes, book_title=book_title)
         if not moments:
             logger.error(f"[{gen_id}] No moments extracted")
             await update_generation_status(gen_id, "failed")
             return
 
-        title = moments[0].title if moments else "Untitled"
+        title = book_title or (moments[0].title if moments else "Untitled")
         logger.info(f"[{gen_id}] Extracted {len(moments)} moments, title={title!r}")
         await update_generation_status(gen_id, "processing", title=title)
         await insert_moments(gen_id, moments)
 
         tasks = []
         for m in moments:
-            tasks.append(_generate_scene_for_moment(gen_id, m.id, m.scene_description))
+            scene_prompt = m.scene_description
+            if book_title:
+                scene_prompt = f"[From the book \"{book_title}\"] {scene_prompt}"
+            tasks.append(_generate_scene_for_moment(gen_id, m.id, scene_prompt))
             tasks.append(_generate_audio_for_moment(gen_id, m.id, m.narration_text, m.emotional_tone))
 
         await asyncio.gather(*tasks, return_exceptions=True)

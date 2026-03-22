@@ -13,10 +13,7 @@ import {
 } from "@/lib/api/generations"
 
 function normalizeStoryTitle(title: string | null): string {
-  const rawTitle = (title || "Untitled Story").trim()
-  if (rawTitle.toLowerCase().includes("laundry room refuge")) return "Ready Player One"
-  if (rawTitle.toLowerCase().includes("mark on the green door")) return "The Hobbit"
-  return rawTitle
+  return (title || "Untitled Story").trim()
 }
 
 function cleanMomentTitle(title: string): string {
