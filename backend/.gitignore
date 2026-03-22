@@ -20,6 +20,7 @@ data/
 # static/scenes/
 static/audio/
 *.pdf
+*.txt
 
 # Finetuning artifacts (large files)
 finetune/dataset/panoramas/
@@ -37,6 +38,9 @@ WorldGen/
 
 # WorldGen2 adapter (not for public commits)
 app/world_model/worldgen2_adapter.py
+
+# Next.js (shouldn't be in backend but just in case)
+.next/
 
 # OS/editor
 .DS_Store

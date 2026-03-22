@@ -67,12 +67,12 @@ async def insert_moments(gen_id: str, moments: list[KeyMoment]) -> None:
         await db.close()
 
 
-async def update_moment_scene(gen_id: str, moment_index: int, status: str, asset_url: str | None = None, asset_format: str | None = None) -> None:
+async def update_moment_scene(gen_id: str, moment_index: int, status: str, asset_url: str | None = None, asset_format: str | None = None, preview_url: str | None = None) -> None:
     db = await get_db()
     try:
         await db.execute(
-            "UPDATE moments SET scene_status = ?, scene_asset_url = ?, scene_asset_format = ?, updated_at = ? WHERE generation_id = ? AND moment_index = ?",
-            (status, asset_url, asset_format, _now(), gen_id, moment_index),
+            "UPDATE moments SET scene_status = ?, scene_asset_url = ?, scene_asset_format = ?, scene_preview_url = ?, updated_at = ? WHERE generation_id = ? AND moment_index = ?",
+            (status, asset_url, asset_format, preview_url, _now(), gen_id, moment_index),
         )
         await db.commit()
     finally:
@@ -143,6 +143,7 @@ async def get_generation(gen_id: str) -> GenerationDetail | None:
                 scene_status=r["scene_status"],
                 scene_asset_url=r["scene_asset_url"],
                 scene_asset_format=r["scene_asset_format"],
+                scene_preview_url=r["scene_preview_url"] if "scene_preview_url" in r.keys() else None,
                 audio_status=r["audio_status"],
                 audio_url=r["audio_url"],
             )
@@ -181,6 +182,7 @@ async def list_moments(gen_id: str) -> list[MomentDetail]:
                 scene_status=r["scene_status"],
                 scene_asset_url=r["scene_asset_url"],
                 scene_asset_format=r["scene_asset_format"],
+                scene_preview_url=r["scene_preview_url"] if "scene_preview_url" in r.keys() else None,
                 audio_status=r["audio_status"],
                 audio_url=r["audio_url"],
             )
@@ -210,6 +212,7 @@ async def get_moment(gen_id: str, moment_index: int) -> MomentDetail | None:
             scene_status=r["scene_status"],
             scene_asset_url=r["scene_asset_url"],
             scene_asset_format=r["scene_asset_format"],
+            scene_preview_url=r["scene_preview_url"] if "scene_preview_url" in r.keys() else None,
             audio_status=r["audio_status"],
             audio_url=r["audio_url"],
         )

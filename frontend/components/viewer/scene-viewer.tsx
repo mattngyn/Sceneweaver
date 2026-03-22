@@ -21,6 +21,7 @@ type SceneViewerProps = {
   sceneStatus: string
   minimal?: boolean
   noFlip?: boolean
+  thumbnailKey?: string
 }
 
 import { buildBackendUrl } from "@/lib/api/generations"
@@ -33,6 +34,7 @@ export function SceneViewer({
   sceneStatus,
   minimal = false,
   noFlip = false,
+  thumbnailKey,
 }: SceneViewerProps) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const wrapperRef = useRef<HTMLDivElement | null>(null)
@@ -106,6 +108,7 @@ export function SceneViewer({
       const webglRenderer = new THREE.WebGLRenderer({
         antialias: false,
         alpha: true,
+        preserveDrawingBuffer: !!thumbnailKey,
       })
       renderer = webglRenderer
       webglRenderer.setClearAlpha(0)
@@ -291,6 +294,17 @@ export function SceneViewer({
 
       if (mounted) {
         setViewerState("ready")
+
+        // Capture thumbnail after a short delay to let the scene render
+        if (thumbnailKey && !minimal) {
+          setTimeout(() => {
+            try {
+              webglRenderer.render(threeScene, perspectiveCamera)
+              const dataUrl = webglRenderer.domElement.toDataURL("image/jpeg", 0.7)
+              localStorage.setItem(`scene-thumb-${thumbnailKey}`, dataUrl)
+            } catch {}
+          }, 2000)
+        }
       }
     }
 

@@ -72,6 +72,7 @@ export default async function ScenePage({ params }: ScenePageProps) {
 
       <ScenePageContent
         genId={genId}
+        momentIndex={momentNumber}
         bookTitle={bookTitle}
         momentTitle={cleanMomentTitle(moment.title)}
         sceneUrl={moment.scene_status === "complete" ? sceneUrl : null}

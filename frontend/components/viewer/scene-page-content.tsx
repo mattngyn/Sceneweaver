@@ -13,6 +13,7 @@ const ease = [0.16, 1, 0.3, 1] as const
 
 type ScenePageContentProps = {
   genId: string
+  momentIndex: number
   bookTitle: string
   momentTitle: string
   sceneUrl: string | null
@@ -26,6 +27,7 @@ type ScenePageContentProps = {
 
 export function ScenePageContent({
   genId,
+  momentIndex,
   bookTitle,
   momentTitle,
   sceneUrl,
@@ -130,6 +132,7 @@ export function ScenePageContent({
               assetFormat={assetFormat}
               sceneStatus={sceneStatus}
               noFlip={noFlip}
+              thumbnailKey={`${genId}-${momentIndex}`}
             />
           </div>
 

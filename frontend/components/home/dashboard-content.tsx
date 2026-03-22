@@ -17,8 +17,6 @@ type DashboardContentProps = {
 }
 
 const ease = [0.16, 1, 0.3, 1] as const
-
-// Content appears after stars have faded in (~1s)
 const BASE_DELAY = 1.0
 
 export function DashboardContent({
@@ -37,10 +35,8 @@ export function DashboardContent({
 
   return (
     <div className="relative z-10">
-      {/* Scene click transition */}
       <SceneTransitionOverlay />
 
-      {/* Light sky transition overlay */}
       <AnimatePresence>
         {isTransitioning && (
           <motion.div
@@ -49,7 +45,8 @@ export function DashboardContent({
             transition={{ duration: 1.2, ease: [0.4, 0, 0.2, 1] }}
             className="fixed inset-0 z-[100]"
             style={{
-              background: "linear-gradient(180deg, #A8C8F0 0%, #C4DAF5 20%, #DBE8FA 40%, #EEF2FC 65%, #FAFBFE 100%)",
+              background:
+                "linear-gradient(180deg, #A8C8F0 0%, #C4DAF5 20%, #DBE8FA 40%, #EEF2FC 65%, #FAFBFE 100%)",
             }}
           />
         )}
@@ -79,7 +76,7 @@ export function DashboardContent({
         </button>
       </motion.header>
 
-      {/* Title area */}
+      {/* Title */}
       <div className="mx-auto max-w-6xl px-5 pb-10 sm:px-8">
         <motion.h1
           initial={{ opacity: 0, y: 16 }}
@@ -155,9 +152,17 @@ export function DashboardContent({
               key={story.title}
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: BASE_DELAY + 0.45 + i * 0.15, ease }}
+              transition={{
+                duration: 0.6,
+                delay: BASE_DELAY + 0.45 + i * 0.15,
+                ease,
+              }}
             >
-              <StoryGroup title={story.title} moments={story.moments} darkMode />
+              <StoryGroup
+                title={story.title}
+                moments={story.moments}
+                darkMode
+              />
             </motion.div>
           ))}
         </div>
