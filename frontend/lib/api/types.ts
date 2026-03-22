@@ -17,7 +17,6 @@ export type MomentDetail = {
   scene_status: GenerationStatus
   scene_asset_url: string | null
   scene_asset_format: AssetFormat | null
-  scene_preview_url: string | null
   audio_status: GenerationStatus
   audio_url: string | null
 }

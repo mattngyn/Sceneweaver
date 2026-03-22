@@ -17,7 +17,6 @@ class SceneStatus:
 class SceneAsset:
     format: str  # "spz" | "ply" | "splat"
     url: str
-    preview_url: str | None = None
     metadata: dict | None = None
 
 

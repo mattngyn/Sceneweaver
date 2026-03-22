@@ -42,7 +42,7 @@ async def _generate_scene_for_moment(gen_id: str, moment_index: int, scene_descr
 
             if status.status == "complete":
                 asset = await adapter.get_scene_asset(job.job_id)
-                await update_moment_scene(gen_id, moment_index, "complete", asset.url, asset.format, asset.preview_url)
+                await update_moment_scene(gen_id, moment_index, "complete", asset.url, asset.format)
                 logger.info(f"[{gen_id}] Scene {moment_index}: complete -> {asset.url}")
                 return
             elif status.status == "failed":

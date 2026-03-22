@@ -65,7 +65,6 @@ class MomentDetail(BaseModel):
     scene_status: str
     scene_asset_url: str | None = None
     scene_asset_format: str | None = None
-    scene_preview_url: str | None = None
     audio_status: str
     audio_url: str | None = None
 
