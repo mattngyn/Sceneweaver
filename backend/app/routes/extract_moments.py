@@ -26,9 +26,9 @@ async def parse_and_extract(
     file: UploadFile = File(...),
     num_scenes: int = Form(5),
 ):
-    """Upload a PDF and extract key moments in one step. No DB, no generation."""
-    if not file.filename or not file.filename.lower().endswith(".pdf"):
-        raise HTTPException(status_code=400, detail="Only PDF files are supported")
+    """Upload a PDF or TXT file and extract key moments in one step. No DB, no generation."""
+    if not file.filename:
+        raise HTTPException(status_code=400, detail="No file provided")
     if not 1 <= num_scenes <= 20:
         raise HTTPException(status_code=400, detail="num_scenes must be between 1 and 20")
 
@@ -36,13 +36,19 @@ async def parse_and_extract(
     if not file_bytes:
         raise HTTPException(status_code=400, detail="Empty file")
 
-    try:
-        text, _ = extract_text_from_pdf(file_bytes)
-    except Exception as e:
-        raise HTTPException(status_code=422, detail=f"Failed to parse PDF: {e}")
+    name = file.filename.lower()
+    if name.endswith(".pdf"):
+        try:
+            text, _ = extract_text_from_pdf(file_bytes)
+        except Exception as e:
+            raise HTTPException(status_code=422, detail=f"Failed to parse PDF: {e}")
+    elif name.endswith(".txt"):
+        text = file_bytes.decode("utf-8", errors="replace")
+    else:
+        raise HTTPException(status_code=400, detail="Only .pdf and .txt files are supported")
 
     if not text.strip():
-        raise HTTPException(status_code=422, detail="No text could be extracted from the PDF")
+        raise HTTPException(status_code=422, detail="No text could be extracted from the file")
 
     try:
         moments = await extract_key_moments(text, num_scenes)

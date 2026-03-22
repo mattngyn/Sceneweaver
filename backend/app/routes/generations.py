@@ -40,20 +40,24 @@ async def create_new_generation(
     source_filename: str | None = None
 
     if file is not None and file.filename:
-        if not file.filename.lower().endswith(".pdf"):
-            raise HTTPException(status_code=400, detail="Only PDF files are supported")
+        name = file.filename.lower()
+        if not (name.endswith(".pdf") or name.endswith(".txt")):
+            raise HTTPException(status_code=400, detail="Only .pdf and .txt files are supported")
 
         file_bytes = await file.read()
         if not file_bytes:
             raise HTTPException(status_code=400, detail="Empty file")
 
-        try:
-            source_text, _ = extract_text_from_pdf(file_bytes)
-        except Exception as e:
-            raise HTTPException(status_code=422, detail=f"Failed to parse PDF: {e}")
+        if name.endswith(".pdf"):
+            try:
+                source_text, _ = extract_text_from_pdf(file_bytes)
+            except Exception as e:
+                raise HTTPException(status_code=422, detail=f"Failed to parse PDF: {e}")
+        else:
+            source_text = file_bytes.decode("utf-8", errors="replace")
 
         if not source_text.strip():
-            raise HTTPException(status_code=422, detail="No text could be extracted from the PDF")
+            raise HTTPException(status_code=422, detail="No text could be extracted from the file")
 
         source_filename = file.filename
 
